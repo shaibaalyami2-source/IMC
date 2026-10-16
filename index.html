@@ -142,7 +142,9 @@ th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:start;whit
 th{font-size:12px;color:var(--muted);background:var(--surface-2);position:sticky;top:0}
 td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
 td .alt{color:var(--muted);font-size:12px}
-.addemp{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) auto;gap:8px;margin-bottom:14px}
+.addemp{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1fr) minmax(0,1.4fr) auto;gap:8px;margin-bottom:14px}
+td.mail{direction:ltr;text-align:start;font-size:13px}
+@media (max-width:1000px){.addemp{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:600px){.addemp{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
 .stats{display:flex;gap:8px;flex-wrap:wrap}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 12px;font-size:13px}
@@ -279,12 +281,14 @@ td .alt{color:var(--muted);font-size:12px}
       <input id="eName" placeholder="الاسم" data-ph="pName" required>
       <input id="eId" class="num" placeholder="الرقم الوظيفي" data-ph="pId" inputmode="numeric" required>
       <input id="eExt" class="num" placeholder="التحويلة" data-ph="pExt" inputmode="numeric">
+      <input id="eDept" placeholder="القسم" data-ph="pDept" list="areaList">
+      <input id="eEmail" class="num" type="email" placeholder="البريد الإلكتروني" data-ph="pEmail">
       <button class="btn primary" type="submit" data-i="addEmp">إضافة / تحديث</button>
     </form>
     <div class="toolbar"><input id="empSearch" placeholder="بحث عن موظف…" data-ph="empSearch"></div>
     <div class="tablewrap">
       <table>
-        <thead><tr><th data-i="name">الاسم</th><th data-i="empid">الرقم الوظيفي</th><th data-i="ext">التحويلة</th><th data-i="otherExt">تحويلات أخرى</th><th></th></tr></thead>
+        <thead><tr><th data-i="name">الاسم</th><th data-i="empid">الرقم الوظيفي</th><th data-i="ext">التحويلة</th><th data-i="otherExt">تحويلات أخرى</th><th data-i="pDept">القسم</th><th data-i="pEmail">البريد الإلكتروني</th><th></th></tr></thead>
         <tbody id="empBody"></tbody>
       </table>
     </div>
@@ -313,10 +317,10 @@ let status="Normal";
 
 /* ---------- i18n ---------- */
 const T={
- en:{title:"Maintenance Requests",sub:"Control Room · Security Department",tNew:"New request",tLog:"Log",tEmp:"Employees",report:"Report",subject:"Subject",floor:"Floor",area:"Department / clinic",status:"Status",normal:"Normal",urgent:"Urgent",reporter:"Reporter",find:"Search by name, employee ID or extension",name:"Name",dept:"Department",empid:"Employee ID",ext:"Extension",email:"Email",reqno:"Request number",reqhint:"Goes up by one after each save",save:"Save & copy",wa:"Send on WhatsApp",clear:"Blank request",preview:"Message preview",copy:"Copy",fAll:"All",fOpen:"Open",fUrgent:"Urgent",fDone:"Done",addEmp:"Add / update",otherExt:"Other extensions",logSearch:"Search the log…",empSearch:"Search employees…",pName:"Name",pId:"Employee ID",pExt:"Extension",editFloors:"Edit floors",arLabel:"Write the report in Arabic",arPh:"e.g. رطوبة عالية في غرفة الغسيل",translate:"Translate ↓",trHint:"The English translation goes into Subject automatically",toEn:"Translate",trWorking:"Translating…",trDone:"Translated into English",trFail:"Translation needs an internet connection. Type the subject in English instead.",addFloor:"Add floor",resetFloors:"Restore default order",doneFloors:"Done",newFloor:"New floor name",up:"Move up",down:"Move down",
+ en:{title:"Maintenance Requests",sub:"Control Room · Security Department",tNew:"New request",tLog:"Log",tEmp:"Employees",report:"Report",subject:"Subject",floor:"Floor",area:"Department / clinic",status:"Status",normal:"Normal",urgent:"Urgent",reporter:"Reporter",find:"Search by name, employee ID or extension",name:"Name",dept:"Department",empid:"Employee ID",ext:"Extension",email:"Email",reqno:"Request number",reqhint:"Goes up by one after each save",save:"Save & copy",wa:"Send on WhatsApp",clear:"Blank request",preview:"Message preview",copy:"Copy",fAll:"All",fOpen:"Open",fUrgent:"Urgent",fDone:"Done",addEmp:"Add / update",otherExt:"Other extensions",logSearch:"Search the log…",empSearch:"Search employees…",pName:"Name",pId:"Employee ID",pExt:"Extension",pDept:"Department",pEmail:"Email",editFloors:"Edit floors",arLabel:"Write the report in Arabic",arPh:"e.g. رطوبة عالية في غرفة الغسيل",translate:"Translate ↓",trHint:"The English translation goes into Subject automatically",toEn:"Translate",trWorking:"Translating…",trDone:"Translated into English",trFail:"Translation needs an internet connection. Type the subject in English instead.",addFloor:"Add floor",resetFloors:"Restore default order",doneFloors:"Done",newFloor:"New floor name",up:"Move up",down:"Move down",
    copied:"Message copied",saved:n=>`Request ${n} saved and copied`,need:"Fill in the subject and the reporter name",dup:n=>`Request number ${n} is already in the log`,empSaved:"Employee saved",empDel:"Employee removed",
    markDone:"Mark done",reopen:"Reopen",del:"Delete",sure:"Delete?",yes:"Yes",no:"No",use:"Use",total:"total",openC:"open",urgentC:"urgent open",emptyLog:"No requests match. Saved requests appear here.",cpy:"Copy",edit:"Edit",doneL:"Done",openL:"Open"},
- ar:{title:"طلبات الصيانة",sub:"غرفة التحكم · قسم الأمن",tNew:"طلب جديد",tLog:"السجل",tEmp:"الموظفين",report:"البلاغ",subject:"الموضوع (Subject)",floor:"الدور",area:"القسم / العيادة",status:"الحالة (Status)",normal:"عادي · Normal",urgent:"عاجل · Urgent",reporter:"مقدم البلاغ",find:"ابحث بالاسم أو الرقم الوظيفي أو التحويلة",name:"الاسم (Name)",dept:"القسم (Department)",empid:"الرقم الوظيفي",ext:"التحويلة",email:"البريد (Email)",reqno:"رقم الطلب",reqhint:"يزيد تلقائياً بعد كل حفظ",save:"حفظ ونسخ",wa:"إرسال واتساب",clear:"طلب جديد فارغ",preview:"معاينة الرسالة",copy:"نسخ",fAll:"الكل",fOpen:"قيد التنفيذ",fUrgent:"عاجل",fDone:"منجز",addEmp:"إضافة / تحديث",otherExt:"تحويلات أخرى",logSearch:"بحث في السجل…",empSearch:"بحث عن موظف…",pName:"الاسم",pId:"الرقم الوظيفي",pExt:"التحويلة",editFloors:"تعديل الأدوار",arLabel:"اكتب البلاغ بالعربي",arPh:"مثال: رطوبة عالية في غرفة الغسيل",translate:"ترجم ↓",trHint:"تنكتب الترجمة الإنجليزية تلقائياً في خانة الموضوع",toEn:"ترجم",trWorking:"جاري الترجمة…",trDone:"تمت الترجمة للإنجليزي",trFail:"الترجمة تحتاج اتصال بالإنترنت. اكتب الموضوع بالإنجليزي يدوياً.",addFloor:"إضافة دور",resetFloors:"استرجاع الترتيب الافتراضي",doneFloors:"تم",newFloor:"اسم الدور الجديد",up:"تحريك لأعلى",down:"تحريك لأسفل",
+ ar:{title:"طلبات الصيانة",sub:"غرفة التحكم · قسم الأمن",tNew:"طلب جديد",tLog:"السجل",tEmp:"الموظفين",report:"البلاغ",subject:"الموضوع (Subject)",floor:"الدور",area:"القسم / العيادة",status:"الحالة (Status)",normal:"عادي · Normal",urgent:"عاجل · Urgent",reporter:"مقدم البلاغ",find:"ابحث بالاسم أو الرقم الوظيفي أو التحويلة",name:"الاسم (Name)",dept:"القسم (Department)",empid:"الرقم الوظيفي",ext:"التحويلة",email:"البريد (Email)",reqno:"رقم الطلب",reqhint:"يزيد تلقائياً بعد كل حفظ",save:"حفظ ونسخ",wa:"إرسال واتساب",clear:"طلب جديد فارغ",preview:"معاينة الرسالة",copy:"نسخ",fAll:"الكل",fOpen:"قيد التنفيذ",fUrgent:"عاجل",fDone:"منجز",addEmp:"إضافة / تحديث",otherExt:"تحويلات أخرى",logSearch:"بحث في السجل…",empSearch:"بحث عن موظف…",pName:"الاسم",pId:"الرقم الوظيفي",pExt:"التحويلة",pDept:"القسم",pEmail:"البريد الإلكتروني",editFloors:"تعديل الأدوار",arLabel:"اكتب البلاغ بالعربي",arPh:"مثال: رطوبة عالية في غرفة الغسيل",translate:"ترجم ↓",trHint:"تنكتب الترجمة الإنجليزية تلقائياً في خانة الموضوع",toEn:"ترجم",trWorking:"جاري الترجمة…",trDone:"تمت الترجمة للإنجليزي",trFail:"الترجمة تحتاج اتصال بالإنترنت. اكتب الموضوع بالإنجليزي يدوياً.",addFloor:"إضافة دور",resetFloors:"استرجاع الترتيب الافتراضي",doneFloors:"تم",newFloor:"اسم الدور الجديد",up:"تحريك لأعلى",down:"تحريك لأسفل",
    copied:"تم نسخ الرسالة",saved:n=>`تم حفظ الطلب ${n} ونسخه`,need:"اكتب الموضوع واسم مقدم البلاغ",dup:n=>`رقم الطلب ${n} موجود في السجل`,empSaved:"تم حفظ الموظف",empDel:"تم حذف الموظف",
    markDone:"تم الإنجاز",reopen:"إعادة فتح",del:"حذف",sure:"تأكيد الحذف؟",yes:"نعم",no:"لا",use:"استخدام",total:"إجمالي",openC:"مفتوح",urgentC:"عاجل مفتوح",emptyLog:"لا توجد طلبات مطابقة. الطلبات المحفوظة تظهر هنا.",cpy:"نسخ",edit:"تعديل",doneL:"منجز",openL:"قيد التنفيذ"}
 };
@@ -487,8 +491,8 @@ function drawSugg(){
 }
 function pick(e){
   $("name").value=e.name;$("empid").value=e.id;$("ext").value=e.ext||"";
-  if(e.dept)$("dept").value=e.dept;
-  if(e.email)$("email").value=e.email;
+  $("dept").value=e.dept||"";
+  $("email").value=e.email||"";
   const dl=$("extList");dl.innerHTML="";(e.exts||[]).forEach(x=>{const o=document.createElement("option");o.value=x;dl.appendChild(o)});
   $("finder").value="";$("sugg").hidden=true;update();
 }
@@ -570,13 +574,14 @@ function renderEmps(){
   list.forEach(e=>{
     const tr=document.createElement("tr");
     const others=(e.exts||[]).filter(x=>x!==e.ext);
-    tr.innerHTML=`<td>${esc(e.name)}${e.alt&&e.alt.length?`<div class="alt">${esc(e.alt.join("، "))}</div>`:""}</td><td class="n">${esc(e.id)}</td><td class="n">${esc(e.ext||"—")}</td><td class="n">${esc(others.join(" · ")||"")}</td><td></td>`;
+    tr.innerHTML=`<td>${esc(e.name)}${e.alt&&e.alt.length?`<div class="alt">${esc(e.alt.join("، "))}</div>`:""}</td><td class="n">${esc(e.id)}</td><td class="n">${esc(e.ext||"—")}</td><td class="n">${esc(others.join(" · ")||"")}</td><td>${esc(e.dept||"")}</td><td class="mail">${esc(e.email||"")}</td><td></td>`;
     const c=tr.lastChild;c.style.display="flex";c.style.gap="6px";
     if(empPending[e.id]){
       c.appendChild(btn(t("yes"),()=>{emps=emps.filter(x=>x!==e);S.set("emps",emps);delete empPending[e.id];renderEmps();toast(t("empDel"))},"del"));
       c.appendChild(btn(t("no"),()=>{delete empPending[e.id];renderEmps()}));
     }else{
       c.appendChild(btn(t("use"),()=>{pick(e);show("new")}));
+      c.appendChild(btn(t("edit"),()=>{$("eName").value=e.name;$("eId").value=e.id;$("eExt").value=e.ext||"";$("eDept").value=e.dept||"";$("eEmail").value=e.email||"";scrollTo(0,0);$("eEmail").focus()}));
       c.appendChild(btn(t("del"),()=>{empPending[e.id]=1;renderEmps()},"del"));
     }
     c.querySelectorAll("button").forEach(b=>{b.className=(b.className+" chip").trim()});
@@ -585,13 +590,14 @@ function renderEmps(){
 }
 $("empForm").addEventListener("submit",ev=>{
   ev.preventDefault();
-  const name=$("eName").value.trim(),id=$("eId").value.trim(),ext=$("eExt").value.trim();
+  const name=$("eName").value.trim(),id=$("eId").value.trim(),ext=$("eExt").value.trim(),dept=$("eDept").value.trim(),email=$("eEmail").value.trim();
   if(!name||!id)return;
   let e=emps.find(x=>x.id===id);
   if(e){if(e.name!==name&&!(e.alt||[]).includes(name))(e.alt=e.alt||[]).push(name)}
   else{e={id,name,alt:[],ext:"",exts:[]};emps.push(e)}
   if(ext){e.ext=ext;if(!e.exts.includes(ext))e.exts.push(ext)}
-  S.set("emps",emps);["eName","eId","eExt"].forEach(f=>$(f).value="");renderEmps();toast(t("empSaved"));
+  e.dept=dept;e.email=email;
+  S.set("emps",emps);["eName","eId","eExt","eDept","eEmail"].forEach(f=>$(f).value="");renderEmps();toast(t("empSaved"));
 });
 
 /* ---------- toast ---------- */
