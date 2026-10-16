@@ -115,6 +115,26 @@ input.num{font-family:var(--mono);direction:ltr;text-align:start}
 .itemact button{border:1px solid var(--line);background:var(--surface-2);color:var(--fg);border-radius:8px;padding:6px 10px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
 .itemact button.del{color:var(--urgent)}
 @media (max-width:560px){.item{grid-template-columns:auto minmax(0,1fr)}.itemact{grid-column:1/-1;justify-content:flex-start}}
+.lblrow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.linkbtn{border:0;background:none;color:var(--accent);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
+.floored{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:10px}
+.flist{display:grid;gap:6px}
+.frow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+.frow .ord{font-family:var(--mono);color:var(--muted);font-size:12px;min-width:18px;text-align:center}
+.frow input{padding:6px 8px;font-size:14px;direction:ltr}
+.frow .fb{display:flex;gap:4px}
+.frow .fb button{border:1px solid var(--line);background:var(--surface-2);color:var(--fg);border-radius:7px;min-width:32px;height:32px;font:inherit;cursor:pointer}
+.frow .fb button.del{color:var(--urgent)}
+.frow .fb button:disabled{opacity:.35;cursor:default}
+.fadd{display:flex;gap:8px;flex-wrap:wrap}
+.fadd input{flex:1;min-width:0;direction:ltr}
+.tr{display:grid;gap:6px;background:var(--accent-soft);border-radius:10px;padding:12px}
+.tr label{color:var(--accent)}
+.trrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:stretch}
+.trrow textarea{resize:vertical;min-height:44px;background:var(--surface)}
+.trrow .btn{justify-content:center}
+#trStatus.err{color:var(--urgent)}
+#trStatus.ok{color:var(--ok)}
 .empty{text-align:center;color:var(--muted);padding:30px;border:1px dashed var(--line);border-radius:var(--r)}
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
 table{width:100%;border-collapse:collapse;font-size:14px}
@@ -159,18 +179,31 @@ td .alt{color:var(--muted);font-size:12px}
       <form class="panel" id="form" autocomplete="off">
         <div class="sec">
           <h2><code>{Report}</code> <span data-i="report">البلاغ</span></h2>
+          <div class="tr">
+            <label for="arText"><span data-i="arLabel">اكتب البلاغ بالعربي</span></label>
+            <div class="trrow">
+              <textarea id="arText" rows="2" dir="rtl" placeholder="مثال: رطوبة عالية في غرفة الغسيل" data-ph="arPh"></textarea>
+              <button type="button" class="btn primary" id="trBtn" data-i="translate">ترجم ↓</button>
+            </div>
+            <span class="hint" id="trStatus" data-i="trHint">تنكتب الترجمة الإنجليزية تلقائياً في خانة الموضوع</span>
+          </div>
           <label><span data-i="subject">الموضوع (Subject)</span>
             <input id="subject" placeholder="High humidity levels." required>
           </label>
           <div class="chips" id="subjectChips"></div>
           <div class="row">
-            <label><span data-i="floor">الدور</span>
+            <label><span class="lblrow"><span data-i="floor">الدور</span><button type="button" class="linkbtn" id="floorEditBtn" data-i="editFloors">تعديل الأدوار</button></span>
               <select id="floor"></select>
             </label>
-            <label><span data-i="area">القسم / العيادة</span>
+            <label><span class="lblrow"><span data-i="area">القسم / العيادة</span><button type="button" class="linkbtn trmini" data-for="area" data-i="toEn">ترجم</button></span>
               <input id="area" list="areaList" placeholder="Dialysis Clinic">
               <datalist id="areaList"></datalist>
             </label>
+          </div>
+          <div class="floored" id="floorEditor" hidden>
+            <div class="flist" id="flist"></div>
+            <div class="fadd"><input id="newFloor" placeholder="First Floor" data-ph="newFloor"><button type="button" class="btn" id="addFloorBtn" data-i="addFloor">إضافة دور</button></div>
+            <div class="fadd"><button type="button" class="btn ghost" id="resetFloors" data-i="resetFloors">استرجاع الترتيب الافتراضي</button><button type="button" class="btn primary" id="doneFloors" data-i="doneFloors">تم</button></div>
           </div>
           <label><span data-i="status">الحالة (Status)</span>
             <div class="seg" id="statusSeg">
@@ -187,8 +220,8 @@ td .alt{color:var(--muted);font-size:12px}
             <div class="sugg" id="sugg" hidden></div>
           </label>
           <div class="row">
-            <label><span data-i="name">الاسم (Name)</span><input id="name" required></label>
-            <label><span data-i="dept">القسم (Department)</span><input id="dept" list="areaList"></label>
+            <label><span class="lblrow"><span data-i="name">الاسم (Name)</span><button type="button" class="linkbtn trmini" data-for="name" data-i="toEn">ترجم</button></span><input id="name" required></label>
+            <label><span class="lblrow"><span data-i="dept">القسم (Department)</span><button type="button" class="linkbtn trmini" data-for="dept" data-i="toEn">ترجم</button></span><input id="dept" list="areaList"></label>
           </div>
           <div class="row three">
             <label><span data-i="empid">الرقم الوظيفي</span><input id="empid" class="num" inputmode="numeric"></label>
@@ -265,7 +298,7 @@ const SEED_LOG = [
   {no:"292",subject:"Need Glass door maintenance",floor:"Ground floor",area:"Pharmacy",status:"Normal",name:"Ah",dept:"",email:"",empid:"10527",ext:"4196",ts:Date.parse("2026-10-14T10:20:00+03:00"),done:true},
   {no:"648",subject:"High humidity levels.",floor:"Second Floor",area:"Dialysis Clinic",status:"Urgent",name:"Mustafa",dept:"",email:"",empid:"10803",ext:"4253",ts:Date.parse("2026-10-15T23:40:00+03:00"),done:false}
 ];
-const FLOORS=["Basement","Ground floor","First Floor","Second Floor","Third Floor","Fourth Floor","Fifth Floor","Roof"];
+const DEFAULT_FLOORS=["Basement","Ground floor","Mezzanine","First Floor","Second Floor","Third Floor","Fourth Floor"];
 const AREAS=["Pharmacy","Dialysis Clinic","Emergency","ICU","Laboratory","Radiology","Reception","Outpatient Clinics","Inpatient Ward","Operating Room","Nursing Station","CSSD (Sterilization)","Cafeteria","Parking","Administration"];
 const SUBJECTS=["Need Glass door maintenance","High humidity levels.","AC not working","Water leakage","Lighting fault","Electrical socket fault","Door lock broken","Plumbing / drainage blockage","Elevator issue","Furniture repair"];
 
@@ -275,14 +308,15 @@ let emps=S.get("emps",null)||SEED_EMPS.map(e=>({...e}));
 let log=S.get("log",null)||SEED_LOG.slice();
 let nextNo=S.get("next",null)||String(Math.max(...log.map(r=>+r.no||0))+1);
 let lang=S.get("lang","ar");
+let floors=S.get("floors",null)||DEFAULT_FLOORS.slice();
 let status="Normal";
 
 /* ---------- i18n ---------- */
 const T={
- en:{title:"Maintenance Requests",sub:"Control Room · Security Department",tNew:"New request",tLog:"Log",tEmp:"Employees",report:"Report",subject:"Subject",floor:"Floor",area:"Department / clinic",status:"Status",normal:"Normal",urgent:"Urgent",reporter:"Reporter",find:"Search by name, employee ID or extension",name:"Name",dept:"Department",empid:"Employee ID",ext:"Extension",email:"Email",reqno:"Request number",reqhint:"Goes up by one after each save",save:"Save & copy",wa:"Send on WhatsApp",clear:"Blank request",preview:"Message preview",copy:"Copy",fAll:"All",fOpen:"Open",fUrgent:"Urgent",fDone:"Done",addEmp:"Add / update",otherExt:"Other extensions",logSearch:"Search the log…",empSearch:"Search employees…",pName:"Name",pId:"Employee ID",pExt:"Extension",
+ en:{title:"Maintenance Requests",sub:"Control Room · Security Department",tNew:"New request",tLog:"Log",tEmp:"Employees",report:"Report",subject:"Subject",floor:"Floor",area:"Department / clinic",status:"Status",normal:"Normal",urgent:"Urgent",reporter:"Reporter",find:"Search by name, employee ID or extension",name:"Name",dept:"Department",empid:"Employee ID",ext:"Extension",email:"Email",reqno:"Request number",reqhint:"Goes up by one after each save",save:"Save & copy",wa:"Send on WhatsApp",clear:"Blank request",preview:"Message preview",copy:"Copy",fAll:"All",fOpen:"Open",fUrgent:"Urgent",fDone:"Done",addEmp:"Add / update",otherExt:"Other extensions",logSearch:"Search the log…",empSearch:"Search employees…",pName:"Name",pId:"Employee ID",pExt:"Extension",editFloors:"Edit floors",arLabel:"Write the report in Arabic",arPh:"e.g. رطوبة عالية في غرفة الغسيل",translate:"Translate ↓",trHint:"The English translation goes into Subject automatically",toEn:"Translate",trWorking:"Translating…",trDone:"Translated into English",trFail:"Translation needs an internet connection. Type the subject in English instead.",addFloor:"Add floor",resetFloors:"Restore default order",doneFloors:"Done",newFloor:"New floor name",up:"Move up",down:"Move down",
    copied:"Message copied",saved:n=>`Request ${n} saved and copied`,need:"Fill in the subject and the reporter name",dup:n=>`Request number ${n} is already in the log`,empSaved:"Employee saved",empDel:"Employee removed",
    markDone:"Mark done",reopen:"Reopen",del:"Delete",sure:"Delete?",yes:"Yes",no:"No",use:"Use",total:"total",openC:"open",urgentC:"urgent open",emptyLog:"No requests match. Saved requests appear here.",cpy:"Copy",edit:"Edit",doneL:"Done",openL:"Open"},
- ar:{title:"طلبات الصيانة",sub:"غرفة التحكم · قسم الأمن",tNew:"طلب جديد",tLog:"السجل",tEmp:"الموظفين",report:"البلاغ",subject:"الموضوع (Subject)",floor:"الدور",area:"القسم / العيادة",status:"الحالة (Status)",normal:"عادي · Normal",urgent:"عاجل · Urgent",reporter:"مقدم البلاغ",find:"ابحث بالاسم أو الرقم الوظيفي أو التحويلة",name:"الاسم (Name)",dept:"القسم (Department)",empid:"الرقم الوظيفي",ext:"التحويلة",email:"البريد (Email)",reqno:"رقم الطلب",reqhint:"يزيد تلقائياً بعد كل حفظ",save:"حفظ ونسخ",wa:"إرسال واتساب",clear:"طلب جديد فارغ",preview:"معاينة الرسالة",copy:"نسخ",fAll:"الكل",fOpen:"قيد التنفيذ",fUrgent:"عاجل",fDone:"منجز",addEmp:"إضافة / تحديث",otherExt:"تحويلات أخرى",logSearch:"بحث في السجل…",empSearch:"بحث عن موظف…",pName:"الاسم",pId:"الرقم الوظيفي",pExt:"التحويلة",
+ ar:{title:"طلبات الصيانة",sub:"غرفة التحكم · قسم الأمن",tNew:"طلب جديد",tLog:"السجل",tEmp:"الموظفين",report:"البلاغ",subject:"الموضوع (Subject)",floor:"الدور",area:"القسم / العيادة",status:"الحالة (Status)",normal:"عادي · Normal",urgent:"عاجل · Urgent",reporter:"مقدم البلاغ",find:"ابحث بالاسم أو الرقم الوظيفي أو التحويلة",name:"الاسم (Name)",dept:"القسم (Department)",empid:"الرقم الوظيفي",ext:"التحويلة",email:"البريد (Email)",reqno:"رقم الطلب",reqhint:"يزيد تلقائياً بعد كل حفظ",save:"حفظ ونسخ",wa:"إرسال واتساب",clear:"طلب جديد فارغ",preview:"معاينة الرسالة",copy:"نسخ",fAll:"الكل",fOpen:"قيد التنفيذ",fUrgent:"عاجل",fDone:"منجز",addEmp:"إضافة / تحديث",otherExt:"تحويلات أخرى",logSearch:"بحث في السجل…",empSearch:"بحث عن موظف…",pName:"الاسم",pId:"الرقم الوظيفي",pExt:"التحويلة",editFloors:"تعديل الأدوار",arLabel:"اكتب البلاغ بالعربي",arPh:"مثال: رطوبة عالية في غرفة الغسيل",translate:"ترجم ↓",trHint:"تنكتب الترجمة الإنجليزية تلقائياً في خانة الموضوع",toEn:"ترجم",trWorking:"جاري الترجمة…",trDone:"تمت الترجمة للإنجليزي",trFail:"الترجمة تحتاج اتصال بالإنترنت. اكتب الموضوع بالإنجليزي يدوياً.",addFloor:"إضافة دور",resetFloors:"استرجاع الترتيب الافتراضي",doneFloors:"تم",newFloor:"اسم الدور الجديد",up:"تحريك لأعلى",down:"تحريك لأسفل",
    copied:"تم نسخ الرسالة",saved:n=>`تم حفظ الطلب ${n} ونسخه`,need:"اكتب الموضوع واسم مقدم البلاغ",dup:n=>`رقم الطلب ${n} موجود في السجل`,empSaved:"تم حفظ الموظف",empDel:"تم حذف الموظف",
    markDone:"تم الإنجاز",reopen:"إعادة فتح",del:"حذف",sure:"تأكيد الحذف؟",yes:"نعم",no:"لا",use:"استخدام",total:"إجمالي",openC:"مفتوح",urgentC:"عاجل مفتوح",emptyLog:"لا توجد طلبات مطابقة. الطلبات المحفوظة تظهر هنا.",cpy:"نسخ",edit:"تعديل",doneL:"منجز",openL:"قيد التنفيذ"}
 };
@@ -292,7 +326,7 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el=>{const v=T[lang][el.dataset.i];if(typeof v==="string")el.textContent=v});
   document.querySelectorAll("[data-ph]").forEach(el=>el.placeholder=T[lang][el.dataset.ph]);
   $("langBtn").textContent=lang==="ar"?"EN":"ع";
-  renderLog();renderEmps();
+  renderLog();renderEmps();if(!$("floorEditor").hidden)drawFloorEditor();
 }
 const $=id=>document.getElementById(id);
 
@@ -307,7 +341,34 @@ document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>show(b.dataset.tab));
 function show(v){document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===v));["new","log","emp"].forEach(x=>$("view-"+x).hidden=x!==v);scrollTo(0,0)}
 
 /* ---------- form setup ---------- */
-FLOORS.forEach(f=>$("floor").add(new Option(f,f)));
+function fillFloors(keep){
+  const sel=$("floor"),cur=keep??sel.value;sel.innerHTML="";
+  floors.forEach(f=>sel.add(new Option(f,f)));
+  if(cur&&!floors.includes(cur))sel.add(new Option(cur,cur));
+  sel.value=cur&&sel.querySelector(`option[value="${CSS.escape(cur)}"]`)?cur:(floors.includes("Ground floor")?"Ground floor":floors[0]||"");
+}
+function saveFloors(){S.set("floors",floors);fillFloors();drawFloorEditor();update()}
+function drawFloorEditor(){
+  const L=$("flist");L.innerHTML="";
+  floors.forEach((f,i)=>{
+    const row=document.createElement("div");row.className="frow";
+    row.innerHTML=`<span class="ord">${i+1}</span><input id="fl_${i}" value="${esc(f)}"><span class="fb"></span>`;
+    const inp=row.querySelector("input");
+    inp.addEventListener("change",()=>{const v=inp.value.trim();if(v){floors[i]=v;saveFloors()}else inp.value=f});
+    const fb=row.querySelector(".fb");
+    const mk=(txt,title,fn,dis,cls)=>{const b=document.createElement("button");b.type="button";b.textContent=txt;b.title=title;b.setAttribute("aria-label",title);b.disabled=dis;if(cls)b.className=cls;b.onclick=fn;fb.appendChild(b)};
+    mk("↑",t("up"),()=>{[floors[i-1],floors[i]]=[floors[i],floors[i-1]];saveFloors()},i===0);
+    mk("↓",t("down"),()=>{[floors[i+1],floors[i]]=[floors[i],floors[i+1]];saveFloors()},i===floors.length-1);
+    mk("✕",t("del"),()=>{floors.splice(i,1);saveFloors()},floors.length<=1,"del");
+    L.appendChild(row);
+  });
+}
+$("floorEditBtn").onclick=()=>{const e=$("floorEditor");e.hidden=!e.hidden;if(!e.hidden)drawFloorEditor()};
+$("doneFloors").onclick=()=>{$("floorEditor").hidden=true};
+$("addFloorBtn").onclick=()=>{const v=$("newFloor").value.trim();if(!v||floors.includes(v))return;floors.push(v);$("newFloor").value="";saveFloors()};
+$("newFloor").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("addFloorBtn").click()}});
+$("resetFloors").onclick=()=>{floors=DEFAULT_FLOORS.slice();saveFloors()};
+fillFloors("Ground floor");
 AREAS.forEach(a=>{const o=document.createElement("option");o.value=a;$("areaList").appendChild(o)});
 SUBJECTS.forEach(s=>{const b=document.createElement("button");b.type="button";b.className="chip";b.textContent=s;b.onclick=()=>{$("subject").value=s;update()};$("subjectChips").appendChild(b)});
 $("statusSeg").querySelectorAll("button").forEach(b=>b.onclick=()=>{status=b.dataset.v;setStatus()});
@@ -363,6 +424,43 @@ async function copy(text){
 }
 $("copyBtn").onclick=async()=>{await copy($("raw").value);toast(t("copied"))};
 
+/* ---------- Arabic → English translation ---------- */
+const hasArabic=s=>/[\u0600-\u06FF]/.test(s);
+const trCache=S.get("trcache",{});
+async function translate(text){
+  text=text.trim();if(!text)return"";
+  if(trCache[text])return trCache[text];
+  let out="";
+  try{
+    const r=await fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q="+encodeURIComponent(text));
+    if(!r.ok)throw 0;const j=await r.json();out=(j[0]||[]).map(x=>x[0]).join("").trim();
+  }catch(e){
+    try{const r=await fetch("https://api.mymemory.translated.net/get?langpair=ar|en&q="+encodeURIComponent(text));
+      const j=await r.json();out=(j.responseData&&j.responseData.translatedText||"").trim();}catch(_){}
+  }
+  if(!out||hasArabic(out))throw new Error("tr");
+  trCache[text]=out;try{const k=Object.keys(trCache);if(k.length>300)delete trCache[k[0]];S.set("trcache",trCache)}catch(_){}
+  return out;
+}
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+function trStatus(msg,cls){const el=$("trStatus");el.textContent=msg;el.className="hint "+(cls||"")}
+let trTimer,trSeq=0;
+async function runMainTranslate(){
+  const text=$("arText").value;if(!text.trim())return;
+  const my=++trSeq;trStatus(t("trWorking"));
+  try{const en=await translate(text);if(my!==trSeq)return;$("subject").value=cap(en);update();trStatus(t("trDone"),"ok")}
+  catch(e){if(my===trSeq)trStatus(t("trFail"),"err")}
+}
+$("trBtn").onclick=()=>{clearTimeout(trTimer);runMainTranslate()};
+$("arText").addEventListener("input",()=>{clearTimeout(trTimer);trTimer=setTimeout(runMainTranslate,900)});
+document.querySelectorAll(".trmini").forEach(b=>b.onclick=async()=>{
+  const f=$(b.dataset.for),v=f.value.trim();if(!v)return;
+  if(!hasArabic(v)){return}
+  const old=b.textContent;b.textContent="…";
+  try{f.value=cap(await translate(v));update()}catch(e){toast(t("trFail"))}
+  b.textContent=old;
+});
+
 /* ---------- employee finder ---------- */
 let hi=-1,matches=[];
 const norm=s=>String(s||"").replace(/[إأآ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").toLowerCase().trim();
@@ -415,7 +513,7 @@ $("form").addEventListener("submit",async ev=>{
   toast(t("saved")(d.reqno));
   resetForm();renderLog();renderEmps();
 });
-function resetForm(){["subject","area","name","dept","email","empid","ext"].forEach(f=>$(f).value="");$("floor").value="Ground floor";status="Normal";$("reqno").value=nextNo;setStatus()}
+function resetForm(){$("arText").value="";trStatus(t("trHint"));["subject","area","name","dept","email","empid","ext"].forEach(f=>$(f).value="");fillFloors("Ground floor");status="Normal";$("reqno").value=nextNo;setStatus()}
 $("clearBtn").onclick=resetForm;
 
 /* ---------- log ---------- */
@@ -458,7 +556,7 @@ function btn(txt,fn,cls){const b=document.createElement("button");b.type="button
 function loadIntoForm(r){
   log=log.filter(x=>x!==r);S.set("log",log);
   ["subject","area","name","dept","email","empid","ext"].forEach(f=>$(f).value=r[f]||"");
-  $("floor").value=r.floor||"Ground floor";$("reqno").value=r.no;status=r.status;setStatus();renderLog();show("new");
+  fillFloors(r.floor||"Ground floor");$("reqno").value=r.no;status=r.status;setStatus();renderLog();show("new");
 }
 
 /* ---------- employees ---------- */
@@ -502,9 +600,9 @@ let tt;function toast(m){const el=$("toast");el.textContent=m;el.hidden=false;cl
 /* ---------- boot ---------- */
 applyTheme();
 const draft=S.get("draft",null);
-if(draft&&(draft.subject||draft.name)){FIELDS.forEach(f=>{if(draft[f]!=null)$(f).value=draft[f]});status=draft.status||"Normal"}
+if(draft&&(draft.subject||draft.name)){FIELDS.forEach(f=>{if(draft[f]!=null&&f!=="floor")$(f).value=draft[f]});fillFloors(draft.floor);status=draft.status||"Normal"}
 else{ // example working state: the latest report, ready to resend
-  $("subject").value="High humidity levels.";$("floor").value="Second Floor";$("area").value="Dialysis Clinic";
+  $("subject").value="High humidity levels.";fillFloors("Second Floor");$("area").value="Dialysis Clinic";
   $("name").value="Mustafa";$("empid").value="10803";$("ext").value="4253";status="Urgent";
 }
 if(!$("reqno").value)$("reqno").value=nextNo;
